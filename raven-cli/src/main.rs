@@ -50,7 +50,8 @@ fn main() -> Result<()> {
             Backend::Interpreter
         },
     );
-    let mut dev = Varvara::new();
+    let mut banks = [[0u8; 0x10000]; 15];
+    let mut dev = Varvara::new(&mut banks);
     let data = vm.reset(&rom);
     dev.reset(data);
     dev.init_args(&mut vm, &args.args);

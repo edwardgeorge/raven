@@ -106,8 +106,8 @@ impl Output<'_> {
 }
 
 /// Handle to the Varvara system
-pub struct Varvara {
-    system: system::System,
+pub struct Varvara<'a> {
+    system: system::System<'a>,
     console: console::Console,
     datetime: datetime::Datetime,
     audio: audio::Audio,
@@ -120,13 +120,7 @@ pub struct Varvara {
     already_warned: [bool; 16],
 }
 
-impl Default for Varvara {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl Device for Varvara {
+impl<'a> Device for Varvara<'a> {
     fn deo(&mut self, vm: &mut Uxn, target: u8) -> bool {
         match target & 0xF0 {
             system::SystemPorts::BASE => self.system.deo(vm, target),
@@ -160,12 +154,12 @@ impl Device for Varvara {
     }
 }
 
-impl Varvara {
+impl<'a> Varvara<'a> {
     /// Builds a new instance of the Varvara peripherals
-    pub fn new() -> Self {
+    pub fn new(banks: &'a mut [[u8; 0x10000]; 15]) -> Self {
         Self {
             console: console::Console::new(),
-            system: system::System::new(),
+            system: system::System::new(banks),
             datetime: datetime::Datetime,
             audio: audio::Audio::new(),
             screen: screen::Screen::new(),

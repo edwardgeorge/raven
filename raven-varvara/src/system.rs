@@ -3,15 +3,9 @@ use std::mem::offset_of;
 use uxn::{Ports, Uxn};
 use zerocopy::{AsBytes, BigEndian, FromBytes, FromZeroes, U16};
 
-pub struct System {
+pub struct System<'a> {
     exit: Option<i32>,
-    banks: [Box<[u8; 65536]>; 15],
-}
-
-impl Default for System {
-    fn default() -> Self {
-        Self::new()
-    }
+    banks: &'a mut [[u8; 65536]],
 }
 
 #[derive(FromZeroes, FromBytes, AsBytes)]
@@ -77,15 +71,14 @@ mod expansion {
     pub const CPYR: u8 = 0x02;
 }
 
-impl System {
-    pub fn new() -> Self {
-        let banks = [(); 15].map(|_| Box::new([0u8; 65536]));
+impl<'a> System<'a> {
+    pub fn new(banks: &'a mut [[u8; 65536]; 15]) -> Self {
         Self { banks, exit: None }
     }
 
     /// Resets the peripheral, loading the given data into expansion memory
     pub fn reset(&mut self, mut mem: &[u8]) {
-        for b in &mut self.banks {
+        for b in self.banks.iter_mut() {
             let n = mem.len().min(b.len());
             b[..n].copy_from_slice(&mem[..n]);
             mem = &mem[n..];

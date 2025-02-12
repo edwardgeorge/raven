@@ -18,7 +18,7 @@ pub enum Event {
 
 pub struct Stage<'a> {
     vm: Uxn<'a>,
-    dev: Varvara,
+    dev: Varvara<'a>,
 
     /// Scale factor to adjust window size
     scale: f32,
@@ -47,7 +47,7 @@ pub struct Stage<'a> {
 impl<'a> Stage<'a> {
     pub fn new(
         vm: Uxn<'a>,
-        dev: Varvara,
+        dev: Varvara<'a>,
         size: (u16, u16),
         scale: f32,
         event_rx: mpsc::Receiver<Event>,

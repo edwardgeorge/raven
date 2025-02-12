@@ -58,7 +58,8 @@ pub fn run() -> Result<()> {
             Backend::Interpreter
         },
     );
-    let mut dev = Varvara::new();
+    let banks = Box::new([[0u8; 0x10000]; 15]);
+    let mut dev = Varvara::new(Box::leak(banks));
     let extra = vm.reset(&rom);
     dev.reset(extra);
     dev.init_args(&mut vm, &args.args);
