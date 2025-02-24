@@ -1,8 +1,8 @@
 use crate::Event;
 use uxn::{Ports, Uxn};
-use zerocopy::{AsBytes, BigEndian, FromBytes, FromZeroes, U16};
+use zerocopy::{BigEndian, FromBytes, IntoBytes, KnownLayout, U16};
 
-#[derive(AsBytes, FromZeroes, FromBytes)]
+#[derive(IntoBytes, FromBytes, KnownLayout)]
 #[repr(C)]
 pub struct MousePorts {
     vector: U16<BigEndian>,
